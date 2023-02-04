@@ -1,0 +1,68 @@
+package com.myclass.service.impl;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.stereotype.Service;
+
+import com.myclass.commons.Validation;
+import com.myclass.entity.ServiceInfo;
+import com.myclass.entity.User;
+import com.myclass.repository.UserMapper;
+import com.myclass.service.UserService;
+
+
+@Service
+public class UserServiceImpl implements UserService {
+
+	
+	private UserMapper userMapper;
+	
+	@Autowired
+	private Validation validation;
+	
+	@Override
+	public User getUserById(int id) {
+		User user = userMapper.findByPk(id);
+		return user;
+	}
+
+	@Override
+	public User getUserByEmail(String email) {
+		User user = userMapper.findByEmail(email);
+		return user;
+	}
+
+	@Override
+	public ServiceInfo add(User user) {
+		int count= userMapper.countByEmail(user.getEmail());
+		if(count > 0) {
+			return new ServiceInfo(false, "Email used");
+		}
+		if(!validation.EmailValidation(user.getEmail())) {
+			return new ServiceInfo(false, "Incorrect email format");
+		}
+		if(!validation.PasswordValidation(user.getPassword())) {
+			return new ServiceInfo(false, "Password must be between 8-20 characters");
+		}
+		try {
+			String hased = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(12));
+			user.setPassword(hased);
+			userMapper.insert(user);
+			return new ServiceInfo(true, "Add successfully", userMapper.findLastUser());
+		}catch (Exception e) {
+			e.printStackTrace();
+			return new ServiceInfo(false, "Add error");
+		}
+		
+	}
+
+	@Override
+	public User getLastUser() {
+		User user = userMapper.findLastUser();
+		return user;
+	}
+
+}

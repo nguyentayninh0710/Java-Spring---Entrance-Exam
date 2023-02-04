@@ -1,0 +1,55 @@
+package com.myclass.repository;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+import org.springframework.stereotype.Component;
+
+import com.myclass.entity.User;
+
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
+
+@Mapper
+@Component
+public interface UserMapper {
+	
+	@Select("SELECT * FROM Users where id=#{id}")
+	@Results(value = {@Result(property = "id", column = "id"),
+			  @Result(property = "firstName", column = "firstName"),
+			  @Result(property = "lastName", column = "password"),
+			  @Result(property = "email", column = "email"),
+			  @Result(property = "password", column = "password"),			  
+			  @Result(property = "updatedAt", column = "updatedAt"),
+			  @Result(property = "createdAt", column = "createdAt")			
+			  })	
+	public User findByPk(@Param("id") int id);
+	
+	@Select("SELECT * FROM Users where id=(SELECT MAX(id) FROM Users)")
+	@Results(value = {@Result(property = "id", column = "id"),
+			  @Result(property = "firstName", column = "firstName"),
+			  @Result(property = "lastName", column = "lastName"),
+			  @Result(property = "email", column = "email"),
+			  @Result(property = "password", column = "password")			
+			  })	
+	public User findLastUser();
+	
+	@Select("Select count(*) from Users where email = #{email}")
+	public int countByEmail(@Param("email") String email);
+	
+	@Select("SELECT * FROM user where email = #{email}")
+	@Results(value = {@Result(property = "pk", column = "pk"),
+			  @Result(property = "firstName", column = "firstName"),
+			  @Result(property = "lastName", column = "lastName"),
+			  @Result(property = "email", column = "email"),
+			  @Result(property = "password", column = "password")})	
+	public User findByEmail(@Param("email") String email);
+	
+	@Update("INSERT INTO Users(firstName, lastName, email, password, updatedAt, createdAt) "
+			+ "VALUES(#{firstName}, #{lastName}, #{email}, #{password}, NOW(), NOW())")
+	@Options(useGeneratedKeys = true, keyProperty = "id")
+	public void insert(User user);
+
+}

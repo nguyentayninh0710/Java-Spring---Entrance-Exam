@@ -1,0 +1,9 @@
+package com.myclass.dto;
+
+import com.myclass.entity.User;
+
+public class TokenDto {
+	private String token;
+	private String refreshToken;
+	private User user;
+}

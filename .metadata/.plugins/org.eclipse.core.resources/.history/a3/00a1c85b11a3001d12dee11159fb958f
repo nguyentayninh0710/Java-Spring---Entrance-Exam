@@ -1,0 +1,46 @@
+package com.myclass.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.myclass.entity.ServiceInfo;
+import com.myclass.entity.User;
+import com.myclass.service.UserService;
+
+@RestController
+@RequestMapping("api/auth")
+public class UserController {
+	
+	@Autowired
+	private UserService userService;
+	
+	@RequestMapping(value = "/sign-in", method = RequestMethod.POST)
+	public Object post(@RequestBody User user) {		
+		try {			
+			ServiceInfo info = userService.add(user);
+			if(info.isStatus()==true) {				
+				info.setMessage(info.getMessage() + "\n" 
+			    + "\"firstName\": " +"\""+info.getUser().getFirstName() +"\","+"\n"
+			    + "\"lastName\": " +"\""+info.getUser().getLastName() +"\","+"\n"
+			    + "\"email\": " +"\""+info.getUser().getEmail() +"\","+"\n"
+			    + "\"displayName\": " +"\""+ info.getUser().getFirstName()+" "+info.getUser().getLastName(() +"\""
+				);
+				return new ResponseEntity<String>(info.getMessage(), HttpStatus.OK);
+			}
+			else {
+				return new ResponseEntity<String>(info.getMessage(), HttpStatus.BAD_REQUEST);
+			}
+			
+		} catch (Exception e) {
+			return new ResponseEntity<HttpStatus>(HttpStatus.BAD_REQUEST);
+		}
+		
+	}
+	
+
+}

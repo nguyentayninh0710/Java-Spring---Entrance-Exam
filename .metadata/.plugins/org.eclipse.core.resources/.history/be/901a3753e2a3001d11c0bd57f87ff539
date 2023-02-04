@@ -1,0 +1,8 @@
+package com.myclass.service;
+
+import com.myclass.entity.Token;
+
+public interface TokenService {
+	Token getToken(String refreshToken);
+	void delete(int userId);
+}

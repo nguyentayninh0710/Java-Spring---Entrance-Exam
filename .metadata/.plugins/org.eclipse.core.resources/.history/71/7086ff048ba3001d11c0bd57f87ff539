@@ -1,0 +1,18 @@
+package com.myclass.config;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
+public class JWTAuthorizationFilter extends BasicAuthenticationFilter{
+	
+	private UserDetailsService _userDetailsService;
+
+	public JWTAuthorizationFilter(AuthenticationManager authenticationManager, 
+			UserDetailsService userDetailsService) {
+		super(authenticationManager);
+		_userDetailsService = userDetailsService;
+	}
+
+}

@@ -1,0 +1,7 @@
+package com.myclass.service;
+
+import com.myclass.entity.Token;
+
+public interface TokenService {
+	Token getTokenBy
+}
